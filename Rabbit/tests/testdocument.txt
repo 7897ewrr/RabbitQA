@@ -1,0 +1,2 @@
+Tom is a dog.
+I am not a dog.
