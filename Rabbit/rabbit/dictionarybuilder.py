@@ -88,12 +88,9 @@ class DictionaryRedisBuilder(object):
 
 
 class DictionaryMemBuilder(object):
-    sent_index = []
-    parse_tree_index = []
-    parser = None
-    ner = None
-
     def __init__(self, url):
+        self.sent_index = list()
+        self.parse_tree_index = list()
         self.url = url
         self.parser = ParserFactory.get_instance('parser')
         self.ner = ParserFactory.get_instance('ner')
@@ -104,7 +101,8 @@ class DictionaryMemBuilder(object):
         wiki_content = soup.find(id="mw-content-text").extract().get_text()
         return wiki_content
 
-    def filt_string(self, text):
+    @staticmethod
+    def filt_string(text):
         """filt the string like [12] in sentence
         """
         res = ""
@@ -182,5 +180,6 @@ class DictionaryBuilder(object):
 
 
 class Dictionary(object):
-    sent_index = None
-    parse_tree_index = None
+    def __init__(self):
+        self.sent_index = None
+        self.parse_tree_index = None

@@ -19,7 +19,7 @@ class TestExtractKeyWorker(unittest.TestCase):
         # case 1
         container = {
             "test_sent": 'Vivian Carol Sobchack is an American cinema and media theorist and cultural critic.'}
-        worker = TestExtractKeyWorker.get_worker(container)
+        worker = self.get_worker(container)
         worker.get_name_entities()
         self.assertEquals(worker.name_entities, ['Vivian Carol Sobchack'])
         # case 2
@@ -27,14 +27,14 @@ class TestExtractKeyWorker(unittest.TestCase):
             "test_sent": "Since the release of the first novel, Harry Potter and the Philosopher's Stone, "
                          "on 30 June 1997, the books have gained immense popularity, "
                          "critical acclaim and commercial success worldwide."}
-        worker = TestExtractKeyWorker.get_worker(container)
+        worker = self.get_worker(container)
         worker.get_name_entities()
         self.assertEquals(worker.name_entities, ["Harry Potter", '30 June 1997,'])
 
     def test_get_nouns(self):
         # case 1
         container = {'test_sent': 'Vivian Carol Sobchack does not like an American cinema'}
-        worker = TestExtractKeyWorker.get_worker(container)
+        worker = self.get_worker(container)
         worker.get_nouns()
         self.assertEquals(worker.nouns, ['Vivian Carol Sobchack', 'an American cinema'])
 
@@ -43,7 +43,7 @@ class TestExtractKeyWorker(unittest.TestCase):
                                   "Harry Potter and the Philosopher's Stone, on 30 June 1997,"
                                   " the books have gained immense popularity, "
                                   "critical acclaim and commercial success worldwide."}
-        worker = TestExtractKeyWorker.get_worker(container)
+        worker = self.get_worker(container)
         worker.get_nouns()
         self.assertEquals(worker.nouns, ["the release of the first novel ,"
                                          " Harry Potter and the Philosopher 's Stone , on 30 June 1997",

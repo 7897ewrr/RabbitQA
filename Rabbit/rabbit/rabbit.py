@@ -26,5 +26,5 @@ if __name__ == "__main__":
     dictionary = dictionary_builder.build_base()
 
     # use answerSys
-    answersystem = AnswerSystemCorePipeline(question, dictionary)
-    answersystem.run()
+    answer_system = AnswerSystemCorePipeline(question, dictionary)
+    answer_system.run()

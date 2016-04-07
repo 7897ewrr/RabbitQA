@@ -10,9 +10,8 @@ from findanswerprocesspipeline import FindAnswerProcessPipeline
 
 
 class AnswerSystemCorePipeline:
-    process_container = {}
-
     def __init__(self, question_input, dictionary):
+        self.process_container = dict()
         self.process_container['origin_question'] = question_input
         self.process_container['document_dictionary'] = dictionary
 

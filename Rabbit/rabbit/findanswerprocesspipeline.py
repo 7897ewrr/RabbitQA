@@ -32,8 +32,8 @@ class SearchWorker(BaseWorker):
 
 class FindAnswerProcessPipeline(ProcessPipeline):
     def __init__(self, process_container):
-        self.content = process_container
-        self.pipeline = []
+        self._content = process_container
+        self._pipeline = []
         self.add_workers([
             SearchWorker,
         ])
