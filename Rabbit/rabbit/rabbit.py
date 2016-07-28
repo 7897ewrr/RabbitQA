@@ -3,7 +3,7 @@
 # Copyright (c) 2015 - 2016, Tony.
 # license: MIT, see LICENSE for more details.
 
-# run: ask: ./rabbit.py https://en.wikipedia.org/wiki/Harry_Potter who is Tom?
+# run: ask: python rabbit/rabbit.py https://en.wikipedia.org/wiki/Harry_Potter who is Tom?
 
 import sys
 import config
