@@ -19,10 +19,12 @@ if __name__ == "__main__":
         questionArray.append(sys.argv[i])
     question = " ".join(questionArray)
     question = str(question)
+
     # logging. question
     config.new_logger.debug("Question Is:" + question)
+
     # create Dict
-    dictionary_builder = DictionaryBuilder.get_instence('mem', sys.argv[1])
+    dictionary_builder = DictionaryBuilder.get_instance('mem', sys.argv[1])
     dictionary = dictionary_builder.build_base()
 
     # use answerSys

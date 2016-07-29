@@ -6,13 +6,13 @@
 import config
 from questionprocesspipeline import QuestionProcessPipeline
 from documentprocesspipeline import DocumentProcessPipeline
-from findanswerprocesspipeline import FindAnswerProcessPipeline
+from searchprocesspipeline import SearchProcessPipeline
 
 
 class AnswerSystemCorePipeline:
     def __init__(self, question_input, dictionary):
         self.process_container = dict()
-        self.process_container['origin_question'] = question_input
+        self.process_container['origin_question_string'] = question_input
         self.process_container['document_dictionary'] = dictionary
 
     def parse_question(self):
@@ -37,7 +37,7 @@ class AnswerSystemCorePipeline:
 
     def search_sentence(self):
         config.new_logger.info("--------------- start searching sentence ------------")
-        pipeline = FindAnswerProcessPipeline(self.process_container)
+        pipeline = SearchProcessPipeline(self.process_container)
         pipeline.process()
         config.new_logger.debug(self.process_container.keys())
 

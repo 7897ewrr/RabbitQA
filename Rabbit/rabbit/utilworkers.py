@@ -77,6 +77,6 @@ class ExtractKeyWorker(BaseWorker):
             self.sentence_tree = list(self.parse.raw_parse(self.sentence))[0]
         nouns_collection = []
         dfs(self.sentence_tree, nouns_collection)
-        config.new_logger.debug(nouns_collection)
+        config.new_logger.debug("nouns_collection=" + str(nouns_collection))
         self.nouns = nouns_collection
         self.container[self.output_nouns_name] = nouns_collection

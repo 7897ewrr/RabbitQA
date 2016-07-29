@@ -14,12 +14,16 @@ from stanfordtoolfactory import ParserFactory
 from utilworkers import ExtractKeyWorker
 
 '''
-    precess question
-    questionInput: the original question
-    questionProcessResult: a collection contains:
-        originQuestion: input question
-        questionTree: question parse tree
-        questionType: type of the question
+    precess question pipeline
+    Input: the original question
+    Output:
+        a collection contains:
+            origin_question_string: input question
+            question_tree: question parse tree
+            question_type: type of the question
+            question_nes:
+            question_nouns
+
 '''
 
 
@@ -27,8 +31,8 @@ class ParseQuestionWorker(BaseWorker):
     @staticmethod
     def process(content):
         parser = ParserFactory.get_instance('parser')
-        origin_question = content['origin_question']
-        question_tree = list(parser.raw_parse(origin_question))[0]
+        origin_question_string = content['origin_question_string']
+        question_tree = list(parser.raw_parse(origin_question_string))[0]
         content['question_tree'] = question_tree
 
 
@@ -37,11 +41,11 @@ class GetQuestionTypeWorker(BaseWorker):
     def process(content):
         question_tree = content['question_tree']
         if question_tree[0].label() == tags.WH_QUESTION_TYPE:
-            config.new_logger.debug("The TYPE if the question is WH")
+            config.new_logger.debug("The TYPE of the question is WH")
             content['question_type'] = tags.WH_QUESTION_TYPE
             return
         if question_tree[0].label() == tags.BINARY_QUESTION_TYPE:
-            config.new_logger.debug("The TYPE if the question is SQ")
+            config.new_logger.debug("The TYPE of the question is SQ")
             content['question_type'] = tags.BINARY_QUESTION_TYPE
             return
         else:
@@ -116,6 +120,17 @@ class ReverseQuestionWorker(BaseWorker):
         config.new_logger.debug("reversed question is: " + reversed_question)
 
 
+class QuestionExtractKeyWorker(ExtractKeyWorker):
+    def process(self, content):
+        self.output_ne_name = 'question_nes'
+        self.output_nouns_name = 'question_nouns'
+        self.container = content
+        self.init_element('origin_question_string', 'question_tree')
+        self.run()
+        self.container[self.output_ne_name] = self.name_entities
+        self.container[self.output_nouns_name] = self.nouns
+
+
 class GenerateQuery(BaseWorker):
     @staticmethod
     def process(content):
@@ -131,18 +146,7 @@ class GenerateQuery(BaseWorker):
         stop = stopwords.words('english')
         query = [item for item in word_bag if item not in stop]
         content['question_query'] = query
-        config.new_logger.debug(query)
-
-
-class QuestionExtractKeyWorker(ExtractKeyWorker):
-    def process(self, content):
-        self.output_ne_name = 'question_nes'
-        self.output_nouns_name = 'question_nouns'
-        self.container = content
-        self.init_element('origin_question', 'question_tree')
-        self.run()
-        self.container[self.output_ne_name] = self.name_entities
-        self.container[self.output_nouns_name] = self.nouns
+        config.new_logger.debug("query=" + str(query))
 
 
 class QuestionProcessPipeline(ProcessPipeline):

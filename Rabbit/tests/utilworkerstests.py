@@ -4,7 +4,7 @@
 # license: MIT, see LICENSE for more details.
 
 import unittest
-from rabbit.utilworkers import ExtractKeyWorker
+from Rabbit.rabbit.utilworkers import ExtractKeyWorker
 
 
 class TestExtractKeyWorker(unittest.TestCase):

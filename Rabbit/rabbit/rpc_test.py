@@ -31,7 +31,15 @@ def run_search():
     print(" client received: " + response.docs)
 
 
+def run_search2():
+    channel = implementations.insecure_channel('localhost', 50051)
+    stub = search_and_index_pb2.beta_create_SearchService_stub(channel)
+    response = stub.Search(search_and_index_pb2.SearchRequest(query='I dog'), _TIMEOUT_SECONDS)
+    print(" client received: " + response.docs)
+
+
 if __name__ == '__main__':
-    run_add_all_index()
-    run_search()
+    #run_search2()
+    # run_add_all_index()
+    # run_search()
     run_clear()

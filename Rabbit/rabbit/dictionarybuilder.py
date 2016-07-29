@@ -23,13 +23,13 @@ class DictionaryRedisBuilder(object):
         self.ner = ParserFactory.get_instance('ner')
         self.redisConn = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-    def getwebcontent(self):
+    def get_web_content(self):
         res = requests.get(self.url)
         soup = BeautifulSoup(res.content, 'html.parser')
-        wikicontent = soup.find(id="mw-content-text").extract().get_text()
-        return wikicontent
+        wiki_content = soup.find(id="mw-content-text").extract().get_text()
+        return wiki_content
 
-    def filtstring(self, text):
+    def filter_string(self, text):
         """filt the string like [12] in sentence
         """
         index = -1
@@ -51,14 +51,14 @@ class DictionaryRedisBuilder(object):
                 res = res + text[i]
         return res
 
-    def indexsent(self):
-        wikicontent = self.getwebcontent()
-        wikisents = nltk.sent_tokenize(wikicontent)
-        redisindex = 0
-        for sentence in wikisents:
+    def index_sent(self):
+        wiki_content = self.get_web_content()
+        wiki_sents = nltk.sent_tokenize(wiki_content)
+        redis_index = 0
+        for sentence in wiki_sents:
             if "\n" in sentence:
                 continue
-            sentence = self.filtstring(sentence)
+            sentence = self.filter_string(sentence)
             parsetree = list(self.parser.raw_parse(sentence))[0]
 
             '''with open("par.txt", "w") as f:
@@ -73,23 +73,23 @@ class DictionaryRedisBuilder(object):
             for part in res[0]:
                 if str(part[1]) != 'O':
                     print(part[0])
-                    self.redisConn.sadd(str(part[0]), redisindex)
+                    self.redisConn.sadd(str(part[0]), redis_index)
 
             # break
-            redisindex += 1
+            redis_index += 1
 
-    def buildBase(self):
+    def build_base(self):
         dict = Dictionary()
         self.redisConn = dict.redisConn
         print(self.url)
-        self.indexsent()
-        dict.sent_index = self.sentIndex
+        self.index_sent()
+        dict.sentence_index = self.sentIndex
         return dict
 
 
 class DictionaryMemBuilder(object):
     def __init__(self, url):
-        self.sent_index = list()
+        self.sentence_index = list()
         self.parse_tree_index = list()
         self.url = url
         self.parser = ParserFactory.get_instance('parser')
@@ -102,7 +102,7 @@ class DictionaryMemBuilder(object):
         return wiki_content
 
     @staticmethod
-    def filt_string(text):
+    def filter_string(text):
         """filt the string like [12] in sentence
         """
         res = ""
@@ -123,9 +123,9 @@ class DictionaryMemBuilder(object):
                 res = res + text[i]
         return res
 
-    def create_index(self, if_test=False, num=10000):
+    def create_index(self, is_test=False, num=10000):
         wiki_sentences = []
-        if if_test:
+        if is_test:
             with open('tests/testdocument.txt') as f:
                 for line in f:
                     wiki_sentences.append(line[:-1])
@@ -136,15 +136,17 @@ class DictionaryMemBuilder(object):
         for sentence in wiki_sentences:
             if "\n" in sentence:
                 continue
-            sentence = self.filt_string(sentence)
+            sentence = self.filter_string(sentence)
             parse_tree = list(self.parser.raw_parse(sentence))[0]
 
             with open("par.txt", "w") as f:
                 f.write(str(parse_tree))
+
             if str(parse_tree[0].label()) != "S":
                 continue
-            self.sent_index.append(sentence)
+            self.sentence_index.append(sentence)
             self.parse_tree_index.append(parse_tree)
+
             config.new_logger.debug("Sentence is: " + sentence)
             config.new_logger.debug("Parse tree is: " + str(parse_tree))
             '''
@@ -162,14 +164,14 @@ class DictionaryMemBuilder(object):
         config.new_logger.debug("WIKI URL IS: " + self.url)
         config.new_logger.info("--------------- start parsing wiki doc --------------")
         self.create_index(config.USE_TEST_INPUT, config.INDEX_SENTENCE_NUM)
-        dictionary.sent_index = self.sent_index
+        dictionary.sentence_index = self.sentence_index
         dictionary.parse_tree_index = self.parse_tree_index
         return dictionary
 
 
 class DictionaryBuilder(object):
     @staticmethod
-    def get_instence(type, url):
+    def get_instance(type, url):
         if type == 'mem':
             dictionary_builder = DictionaryMemBuilder(url)
         elif type == 'redis':
@@ -181,5 +183,5 @@ class DictionaryBuilder(object):
 
 class Dictionary(object):
     def __init__(self):
-        self.sent_index = None
+        self.sentence_index = None
         self.parse_tree_index = None
