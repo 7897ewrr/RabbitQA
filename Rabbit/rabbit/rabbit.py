@@ -23,10 +23,9 @@ if __name__ == "__main__":
     # logging. question
     config.new_logger.debug("Question Is:" + question)
 
-    # create Dict
-    dictionary_builder = DictionaryBuilder.get_instance('mem', sys.argv[1])
-    dictionary = dictionary_builder.build_base()
+    document_url = sys.argv[1]
+    config.new_logger.debug("document url:" + document_url)
 
     # use answerSys
-    answer_system = AnswerSystemCorePipeline(question, dictionary)
+    answer_system = AnswerSystemCorePipeline(question, document_url)
     answer_system.run()

@@ -25,14 +25,10 @@ class IndexWorker(BaseWorker):
 
     @staticmethod
     def process(content):
-        sentences = content["document_dictionary"].sentence_index
-        index_sentence_id_to_sentence_map = {}
-        sentence_id = 1
-        for sentence in sentences:
-            IndexWorker.index_sentence(sentence_id, sentence)
-            index_sentence_id_to_sentence_map[sentence_id] = sentence
-            sentence_id += 1
-        content["index_sentence_id_to_sentence_map"] = index_sentence_id_to_sentence_map
+        sentences = content["sentence_dictionary"].index_sentence_id_to_sentence_map
+
+        for sentence_id in sentences:
+            IndexWorker.index_sentence(sentence_id, sentences[sentence_id])
 
 
 # class SearchWorker(BaseWorker):
@@ -73,8 +69,7 @@ class SearchWorker(BaseWorker):
         config.new_logger.debug("searching, query=" + query)
         response = stub.Search(search_and_index_pb2.SearchRequest(query=query), _TIMEOUT_SECONDS)
         config.new_logger.debug("search result: " + response.docs)
-
-        index_sentence_id_to_sentence_map = content["index_sentence_id_to_sentence_map"]
+        content["search_result_index_list"] = response.docs
 
 
 class SearchProcessPipeline(ProcessPipeline):

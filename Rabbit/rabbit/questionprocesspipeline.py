@@ -21,7 +21,9 @@ from utilworkers import ExtractKeyWorker
             origin_question_string: input question
             question_tree: question parse tree
             question_type: type of the question
-            question_nes:
+            reversed_question
+            question_query
+            question_nes
             question_nouns
 
 '''
@@ -118,6 +120,7 @@ class ReverseQuestionWorker(BaseWorker):
             except:
                 reversed_question = ReverseQuestionWorker.tree_to_string(question_tree[1])
         config.new_logger.debug("reversed question is: " + reversed_question)
+        content['reversed_question'] = reversed_question
 
 
 class QuestionExtractKeyWorker(ExtractKeyWorker):
