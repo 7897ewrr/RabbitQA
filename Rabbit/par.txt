@@ -1,2 +1,51 @@
 (ROOT
-  (S (NP (PRP I)) (VP (VBP am) (RB not) (NP (DT a) (NN dog))) (. .)))
+  (S
+    (NP (DT The) (JJ main) (NN story) (NN arc))
+    (VP
+      (VBZ concerns)
+      (NP
+        (NP (NP (NNP Harry) (POS 's)) (NN struggle))
+        (PP
+          (IN against)
+          (NP
+            (NP (NNP Lord) (NNP Voldemort))
+            (, ,)
+            (NP
+              (NP (DT a) (JJ dark) (NN wizard))
+              (SBAR
+                (WHNP (WP who))
+                (S
+                  (VP
+                    (VBZ intends)
+                    (S
+                      (VP
+                        (TO to)
+                        (VP
+                          (VP (VB become) (ADJP (JJ immortal)))
+                          (, ,)
+                          (VP
+                            (VB overthrow)
+                            (NP
+                              (NP
+                                (DT the)
+                                (JJ wizard)
+                                (VBG governing)
+                                (NN body))
+                              (VP
+                                (VBN known)
+                                (PP
+                                  (IN as)
+                                  (NP
+                                    (NP (DT the) (NNP Ministry))
+                                    (PP (IN of) (NP (NNP Magic))))))))
+                          (, ,)
+                          (CC and)
+                          (VP
+                            (VB subjugate)
+                            (NP
+                              (PDT all)
+                              (NP (NNS wizards))
+                              (CC and)
+                              (NP (JJ non-magical) (NNS people))))))))))
+              (PRN (-LRB- -LRB-) (NP (NNP Muggles)) (-RRB- -RRB-)))))))
+    (. .)))

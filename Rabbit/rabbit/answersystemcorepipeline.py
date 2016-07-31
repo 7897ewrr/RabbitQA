@@ -6,43 +6,57 @@
 import config
 from questionprocesspipeline import QuestionProcessPipeline
 from documentprocesspipeline import DocumentProcessPipeline
-from findanswerprocesspipeline import FindAnswerProcessPipeline
+from searchprocesspipeline import SearchProcessPipeline
 
 
 class AnswerSystemCorePipeline:
-    def __init__(self, question_input, dictionary):
+    def __init__(self, origin_question_string, document_url):
         self.process_container = dict()
-        self.process_container['origin_question'] = question_input
-        self.process_container['document_dictionary'] = dictionary
+        self.process_container['origin_question_string'] = origin_question_string
+        self.process_container['document_url'] = document_url
+
+    def parse_document(self):
+        """
+        Input: document_url
+        Output: sentence_dictionary
+                    -index_sentence_id_to_sentence_map
+                    -index_sentence_id_to_sentence_tree_map
+        """
+        config.new_logger.info("--------------- start parsing document --------------")
+        pipeline = DocumentProcessPipeline(self.process_container)
+        pipeline.process()
+        config.new_logger.debug(self.process_container.keys())
 
     def parse_question(self):
         """
-            precess question
-            questionInput: the original question
-            questionProcessResult: a collection contains:
-                originQuestion: input question
-                questionTree: question parse tree
-                questionType: type of the question
+        Input: origin_question_string
+        Output: question_tree: question parse tree
+                question_type: type of the question
+                reversed_question
+                question_query
+                question_nes
+                question_nouns
         """
         config.new_logger.info("--------------- start parsing question --------------")
         pipeline = QuestionProcessPipeline(self.process_container)
         pipeline.process()
         config.new_logger.debug(self.process_container.keys())
 
-    def parse_document(self):
-        config.new_logger.info("--------------- start parsing document --------------")
-        pipeline = DocumentProcessPipeline(self.process_container)
-        pipeline.process()
-        config.new_logger.debug(self.process_container.keys())
-
     def search_sentence(self):
-        config.new_logger.info("--------------- start searching sentence ------------")
-        pipeline = FindAnswerProcessPipeline(self.process_container)
+        """
+        Input:  sentence_dictionary
+                question_nouns
+                question_nes
+
+        Output: search_result_index_list
+        """
+        config.new_logger.info("--------------- start indexing and searching sentence ------------")
+        pipeline = SearchProcessPipeline(self.process_container)
         pipeline.process()
         config.new_logger.debug(self.process_container.keys())
 
     def run(self):
         config.new_logger.info("--------------- start running -----------------------")
-        self.parse_question()
         self.parse_document()
+        self.parse_question()
         self.search_sentence()

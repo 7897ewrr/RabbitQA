@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "rpc";
+option java_outer_classname = "SearchAndIndexProto";
+option objc_class_prefix = "HLW";
+
+package rpc;
+
+
+service SearchService {
+  rpc Search (SearchRequest) returns (SearchReply) {}
+  rpc Index (IndexRequest) returns (IndexReply) {}
+}
+
+
+message SearchRequest {
+  string query = 1;
+}
+
+
+message SearchReply {
+  string docs = 1;
+}
+
+message IndexRequest {
+  string doc = 1;
+}
+
+
+message IndexReply {
+  bool status = 1;
+}
