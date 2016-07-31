@@ -3,12 +3,13 @@
 # Copyright (c) 2015 - 2016, Tony.
 # license: MIT, see LICENSE for more details.
 
-# run: ask: python rabbit/rabbit.py https://en.wikipedia.org/wiki/Harry_Potter who is Tom?
+# run: ask: python rabbit/rabbit.py https://en.wikipedia.org/wiki/Harry_Potter What is Harry Potter?
+# if cannot find module, run export PYTHONPATH='.'
 
 import sys
 import config
 from answersystemcorepipeline import AnswerSystemCorePipeline
-from dictionarybuilder import DictionaryBuilder
+
 
 if __name__ == "__main__":
 

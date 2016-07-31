@@ -5,6 +5,8 @@
 from __future__ import print_function
 from processpipelineapi import *
 import config
+import string
+from sets import Set
 
 
 from grpc.beta import implementations
@@ -18,6 +20,8 @@ class IndexWorker(BaseWorker):
     def index_sentence(sentence_id, sentence):
         channel = implementations.insecure_channel('localhost', 50051)
         stub = search_and_index_pb2.beta_create_SearchService_stub(channel)
+        sentence = string.replace(sentence, "\"", " ")
+        sentence = string.replace(sentence, "\'", " ")
         config.new_logger.debug("indexing sentence=" + "{'id':'" + str(sentence_id) + "','content':'" + sentence + "'}")
         response = stub.Index(search_and_index_pb2.IndexRequest(
             doc="{'id':'" + str(sentence_id) + "','content':'" + sentence + "'}"), _TIMEOUT_SECONDS)
@@ -31,38 +35,19 @@ class IndexWorker(BaseWorker):
             IndexWorker.index_sentence(sentence_id, sentences[sentence_id])
 
 
-# class SearchWorker(BaseWorker):
-#     @staticmethod
-#     def process(content):
-#         document_dictionary = content['document_dictionary']
-#         document_corpus = document_dictionary.document_corpus
-#         query = ['dog']
-#         search_result_index_list = []
-#         i = 0
-#         for sentence in document_corpus:
-#             contain_all = True
-#             word_set = set()
-#             for each_word in sentence:
-#                 word_set.add(str(each_word))
-#             for query_word in query:
-#                 if query_word not in word_set:
-#                     contain_all = False
-#                     break
-#             if contain_all:
-#                 search_result_index_list.append(i)
-#             i += 1
-#         config.new_logger.debug(search_result_index_list)
-
-
 class SearchWorker(BaseWorker):
     @staticmethod
     def process(content):
-        query = ""
+        query_set = set()
 
         for ne in content["question_nes"]:
-            query += ne
+            query_set.add(ne)
         for noun in content["question_nouns"]:
-            query += noun
+            query_set.add(noun)
+
+        query = ""
+        for term in query_set:
+            query += term + " "
 
         channel = implementations.insecure_channel('localhost', 50051)
         stub = search_and_index_pb2.beta_create_SearchService_stub(channel)

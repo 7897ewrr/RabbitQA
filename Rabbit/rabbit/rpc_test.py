@@ -1,17 +1,22 @@
 from __future__ import print_function
 
 from grpc.beta import implementations
+from grpc.framework.interfaces.face.face import AbortionError
 
 import rpc_utils.search_and_index_pb2 as search_and_index_pb2
+import config
 
 _TIMEOUT_SECONDS = 10
 
 
 def run_clear():
-    channel = implementations.insecure_channel('localhost', 50051)
-    stub = search_and_index_pb2.beta_create_SearchService_stub(channel)
-    response = stub.Index(search_and_index_pb2.IndexRequest(doc="{'id':'-1','content':'CLEAR'}"), _TIMEOUT_SECONDS)
-    print(" client received: ", response.status)
+    try:
+        channel = implementations.insecure_channel('localhost', 50051)
+        stub = search_and_index_pb2.beta_create_SearchService_stub(channel)
+        response = stub.Index(search_and_index_pb2.IndexRequest(doc="{'id':'-1','content':'CLEAR'}"), _TIMEOUT_SECONDS)
+        print(" client received: ", response.status)
+    except AbortionError:
+        config.new_logger.exception("RPC Exception")
 
 
 def run_add_all_index():

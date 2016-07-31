@@ -6,9 +6,9 @@
 
 import logging as new_logger
 
-new_logger.basicConfig(format='%(asctime)s %(levelname)s %(module)s:%(message)s', level=new_logger.DEBUG)
+new_logger.basicConfig(format='%(asctime)s %(levelname)s %(module)s:%(message)s', level=new_logger.INFO)
 
-USE_TEST_INPUT = True
+USE_TEST_INPUT = False
 INDEX_SENTENCE_NUM = 5
 
 

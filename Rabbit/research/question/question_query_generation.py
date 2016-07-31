@@ -7,11 +7,11 @@ from nltk.tree import Tree
 from pattern.en import lemma
 from nltk.corpus import stopwords
 
-import tags
-import config
-from processpipelineapi import *
-from stanfordtoolfactory import ParserFactory
-from utilworkers import ExtractKeyWorker
+import Rabbit.rabbit.tags as tags
+import Rabbit.rabbit.config as config
+from Rabbit.rabbit.processpipelineapi import *
+from Rabbit.rabbit.stanfordtoolfactory import ParserFactory
+from Rabbit.rabbit.utilworkers import ExtractKeyWorker
 
 '''
     precess question pipeline
@@ -136,16 +136,20 @@ class QuestionExtractKeyWorker(ExtractKeyWorker):
 
 class GenerateQuery(BaseWorker):
     @staticmethod
+    def remove_punctuation(string):
+        return str.replace(string, "?", "")
+
+    @staticmethod
     def process(content):
         ner = content['question_nes']
         nouns = content['question_nouns']
         word_bag = set()
         for words in ner:
             for word in words.split():
-                word_bag.add(word)
+                word_bag.add(GenerateQuery.remove_punctuation(word))
         for words in nouns:
             for word in words.split():
-                word_bag.add(word)
+                word_bag.add(GenerateQuery.remove_punctuation(word))
         stop = stopwords.words('english')
         query = [item for item in word_bag if item not in stop]
         content['question_query'] = query
@@ -163,3 +167,12 @@ class QuestionProcessPipeline(ProcessPipeline):
             QuestionExtractKeyWorker(),
             GenerateQuery,
         ])
+
+if __name__ == "__main__":
+    process_container = dict()
+    process_container['origin_question_string'] = "Who is Harry Potter?"
+    config.new_logger.info("--------------- start parsing question --------------")
+    pipeline = QuestionProcessPipeline(process_container)
+    pipeline.process()
+    for element_key in process_container:
+        config.new_logger.info("----key:-----"+ str(element_key)+ "-----value:-----"+str(process_container[element_key]))
